@@ -1,15 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
+from app.models import Product
 
-# Создаем Blueprint для маршрутов фильтрации
 filter_bp = Blueprint('filter', __name__, url_prefix='/filters')
-
-# Временные данные для тестирования
-products = [
-    {"id": 1, "name": "Классический пончик", "price": 50.0, "description": "Классический вкус.",
-     "image_url": "/static/images/classic.png"},
-    {"id": 2, "name": "Шоколадный пончик", "price": 60.0, "description": "С шоколадной глазурью.",
-     "image_url": "/static/images/chocolate.png"}
-]
 
 
 @filter_bp.route('/')
@@ -18,10 +10,21 @@ def filter_products():
     min_price = request.args.get('min_price', type=float)
     max_price = request.args.get('max_price', type=float)
 
-    filtered_products = products
+    query = Product.query
     if min_price is not None:
-        filtered_products = [p for p in filtered_products if p["price"] >= min_price]
+        query = query.filter(Product.price >= min_price)
     if max_price is not None:
-        filtered_products = [p for p in filtered_products if p["price"] <= max_price]
+        query = query.filter(Product.price <= max_price)
 
-    return jsonify(filtered_products)
+    filtered_products = query.all()
+    product_list = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "image_url": product.image_url
+        }
+        for product in filtered_products
+    ]
+    return jsonify(product_list)

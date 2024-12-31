@@ -23,6 +23,8 @@ def create_app(config_class='config.Config'):
     from app.routes.review_routes import review_bp
     from app.routes.filter_routes import filter_bp
 
+    from app.models import Product, Review
+
     app.register_blueprint(product_bp)
     app.register_blueprint(review_bp)
     app.register_blueprint(filter_bp)
