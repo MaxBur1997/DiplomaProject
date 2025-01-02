@@ -1,61 +1,18 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, render_template
 from app.models import Product
-from app import db
 
-product_bp = Blueprint('product', __name__, url_prefix='/products')
+product_bp = Blueprint('product', __name__)
 
-
-@product_bp.route('/')
-def get_products():
-    """Маршрут для получения списка товаров."""
+@product_bp.route('/list')
+def list_products():
+    """Страница со списком товаров."""
     products = Product.query.all()
-    product_list = [
-        {
-            "id": product.id,
-            "name": product.name,
-            "description": product.description,
-            "price": product.price,
-            "image_url": product.image_url
-        }
-        for product in products
-    ]
-    return jsonify(product_list)
+    return render_template('filter_results.html', products=products)  # Используем filter_results.html
 
-
-@product_bp.route('/<int:product_id>')
-def get_product(product_id):
-    """Маршрут для получения информации о конкретном товаре."""
+@product_bp.route('/detail/<int:product_id>')
+def product_detail(product_id):
+    """Детальная информация о товаре."""
     product = Product.query.get(product_id)
     if not product:
-        return jsonify({"error": "Товар не найден"}), 404
-    return jsonify({
-        "id": product.id,
-        "name": product.name,
-        "description": product.description,
-        "price": product.price,
-        "image_url": product.image_url
-    })
-
-
-@product_bp.route('/', methods=['POST'])
-def add_product():
-    """Маршрут для добавления нового товара."""
-    data = request.get_json()
-    if not all(key in data for key in ("name", "description", "price")):
-        return jsonify({"error": "Некорректные данные"}), 400
-
-    new_product = Product(
-        name=data["name"],
-        description=data["description"],
-        price=data["price"],
-        image_url=data.get("image_url")
-    )
-    db.session.add(new_product)
-    db.session.commit()
-    return jsonify({
-        "id": new_product.id,
-        "name": new_product.name,
-        "description": new_product.description,
-        "price": new_product.price,
-        "image_url": new_product.image_url
-    }), 201
+        return render_template('error.html', message="Product not found"), 404
+    return render_template('product_detail.html', product=product)
