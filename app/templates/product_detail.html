@@ -11,9 +11,27 @@
 <hr>
 
 <h3>Reviews</h3>
-{% if product.reviews %}
+
+<!-- Элементы управления сортировкой -->
+<form action="{{ url_for('product.product_detail', product_id=product.id) }}" method="get" style="margin-bottom: 1em;">
+    <label for="sort_by">Sort by:</label>
+    <select id="sort_by" name="sort_by">
+        <option value="date" {% if sort_by == 'date' %}selected{% endif %}>Date</option>
+        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Rating</option>
+    </select>
+
+    <label for="order">Order:</label>
+    <select id="order" name="order">
+        <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
+        <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
+    </select>
+
+    <button type="submit">Sort</button>
+</form>
+
+{% if reviews %}
     <ul>
-        {% for review in product.reviews %}
+        {% for review in reviews %}
             <li>
                 <strong>{{ review.user_name }}</strong> rated {{ review.rating }}/5
                 <p>{{ review.comment }}</p>
