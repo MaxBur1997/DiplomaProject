@@ -8,5 +8,45 @@
 <p><strong>Description:</strong> {{ product.description }}</p>
 <p><strong>Price:</strong> ${{ product.price }}</p>
 
+<hr>
+
+<h3>Reviews</h3>
+{% if product.reviews %}
+    <ul>
+        {% for review in product.reviews %}
+            <li>
+                <strong>{{ review.user_name }}</strong> rated {{ review.rating }}/5
+                <p>{{ review.comment }}</p>
+                <small>Posted on {{ review.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No reviews yet. Be the first to review this product!</p>
+{% endif %}
+
+<hr>
+
+<h3>Add a Review</h3>
+<form action="{{ url_for('review.add_review') }}" method="post">
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <label for="user_name">Your Name:</label>
+    <input type="text" id="user_name" name="user_name" required>
+
+    <label for="rating">Rating:</label>
+    <select id="rating" name="rating" required>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+
+    <label for="comment">Comment:</label>
+    <textarea id="comment" name="comment" rows="4"></textarea>
+
+    <button type="submit">Submit Review</button>
+</form>
+
 <a href="{{ url_for('product.list_products') }}">Back to Products</a>
 {% endblock %}

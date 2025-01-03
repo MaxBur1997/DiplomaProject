@@ -1,71 +1,35 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, redirect, url_for, flash
 from app.models import Review, Product
 from app import db
 
 review_bp = Blueprint('review', __name__, url_prefix='/reviews')
 
-
-@review_bp.route('/')
-def get_reviews():
-    """Маршрут для получения всех отзывов."""
-    reviews = Review.query.all()
-    review_list = [
-        {
-            "id": review.id,
-            "product_id": review.product_id,
-            "user_name": review.user_name,
-            "rating": review.rating,
-            "comment": review.comment,
-            "created_at": review.created_at.isoformat()
-        }
-        for review in reviews
-    ]
-    return jsonify(review_list)
-
-
-@review_bp.route('/<int:product_id>')
-def get_reviews_for_product(product_id):
-    """Маршрут для получения отзывов к конкретному товару."""
-    reviews = Review.query.filter_by(product_id=product_id).all()
-    review_list = [
-        {
-            "id": review.id,
-            "product_id": review.product_id,
-            "user_name": review.user_name,
-            "rating": review.rating,
-            "comment": review.comment,
-            "created_at": review.created_at.isoformat()
-        }
-        for review in reviews
-    ]
-    return jsonify(review_list)
-
-
-@review_bp.route('/', methods=['POST'])
+@review_bp.route('/add', methods=['POST'])
 def add_review():
     """Маршрут для добавления нового отзыва."""
-    data = request.get_json()
-    if not all(key in data for key in ("product_id", "user_name", "rating")):
-        return jsonify({"error": "Некорректные данные"}), 400
+    product_id = request.form.get('product_id')
+    user_name = request.form.get('user_name')
+    rating = request.form.get('rating')
+    comment = request.form.get('comment')
+
+    if not all([product_id, user_name, rating]):
+        flash("Please fill in all required fields.", "error")
+        return redirect(request.referrer)
 
     # Проверяем, существует ли товар
-    product = Product.query.get(data["product_id"])
+    product = Product.query.get(product_id)
     if not product:
-        return jsonify({"error": "Товар не найден"}), 404
+        flash("Product not found.", "error")
+        return redirect(request.referrer)
 
     new_review = Review(
-        product_id=data["product_id"],
-        user_name=data["user_name"],
-        rating=data["rating"],
-        comment=data.get("comment", "")
+        product_id=product_id,
+        user_name=user_name,
+        rating=int(rating),
+        comment=comment
     )
     db.session.add(new_review)
     db.session.commit()
-    return jsonify({
-        "id": new_review.id,
-        "product_id": new_review.product_id,
-        "user_name": new_review.user_name,
-        "rating": new_review.rating,
-        "comment": new_review.comment,
-        "created_at": new_review.created_at.isoformat()
-    }), 201
+
+    flash("Your review has been added successfully!", "success")
+    return redirect(url_for('product.product_detail', product_id=product_id))
