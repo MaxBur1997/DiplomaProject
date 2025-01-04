@@ -1,13 +1,41 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, request, render_template, redirect, url_for
 from app.models import Product
+from sqlalchemy import func
+
+
 
 product_bp = Blueprint('product', __name__)
 
-@product_bp.route('/list')
+
+@product_bp.route('/products/list', methods=['GET', 'POST'])
 def list_products():
-    """Страница со списком товаров."""
-    products = Product.query.all()
-    return render_template('filter_results.html', products=products)  # Используем filter_results.html
+    """Отображение списка продуктов с фильтрацией."""
+    query = Product.query
+
+    # Получение параметров фильтрации из GET-запроса
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+    name = request.args.get('name', '').strip()
+
+    # Применение фильтров
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+    if name:
+        # Фильтрация имени независимо от регистра
+        query = query.filter(func.lower(Product.name).like(f"%{name.lower()}%"))
+
+    products = query.all()
+
+    return render_template(
+        'product_list.html',
+        products=products,
+        min_price=min_price,
+        max_price=max_price,
+        name=name
+    )
+
 
 @product_bp.route('/detail/<int:product_id>')
 def product_detail(product_id):

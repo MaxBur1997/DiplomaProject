@@ -5,7 +5,6 @@ from app import create_app
 
 app = create_app()
 
-
 @app.route('/images/<path:filename>')
 def serve_image(filename):
     """Сервировка изображений из папки images."""
