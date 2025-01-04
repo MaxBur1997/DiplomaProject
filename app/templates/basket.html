@@ -4,5 +4,28 @@
 
 {% block content %}
 <h2>Your Basket</h2>
-<p>Your basket is currently empty.</p>
+
+{% if basket_details %}
+    <ul>
+        {% for item in basket_details %}
+            <li>
+                <strong>{{ item.product.name }}</strong> - {{ item.quantity }} pcs - ${{ item.total }}
+                <form action="{{ url_for('basket.remove_from_basket', product_id=item.product.id) }}" method="post" style="display: inline;">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Total: ${{ total_price }}</h3>
+
+    <form action="{{ url_for('basket.clear_basket') }}" method="post">
+        <button type="submit">Clear Basket</button>
+    </form>
+{% else %}
+    <p>Your basket is empty.</p>
+{% endif %}
+
+<a href="{{ url_for('product.list_products') }}">Continue Shopping</a>
+
 {% endblock %}
