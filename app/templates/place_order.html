@@ -3,52 +3,40 @@
 {% block title %}Place an Order{% endblock %}
 
 {% block content %}
-<h2>Place an Order</h2>
+<div style="text-align: center; margin: 0 auto; max-width: 600px;">
+    <h2>Place an Order</h2>
 
-{% if basket_details %}
-    <h3>Your Order</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in basket_details %}
-                <tr>
-                    <td>{{ item.product.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>${{ item.total }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2"><strong>Total Price:</strong></td>
-                <td><strong>${{ total_price }}</strong></td>
-            </tr>
-        </tfoot>
-    </table>
-    <hr>
-    <h3>Contact Information</h3>
-    <form method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
+    <h3>Order Details</h3>
+    <ul class="list-group mb-4">
+        {% for item in basket_details %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ item.product.name }}
+                <span>{{ item.quantity }} pcs - ${{ item.total }}</span>
+            </li>
+        {% endfor %}
+    </ul>
 
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required>
+    <h3>Total: ${{ total_price }}</h3>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="address">Delivery Address:</label>
-        <textarea id="address" name="address" rows="3" required></textarea>
-
-        <button type="submit" class="btn btn-primary">Send</button>
+    <h3 class="mt-4">Contact Information</h3>
+    <form action="{{ url_for('basket.payment_system') }}" method="post" style="margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9;">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Delivery Address:</label>
+            <textarea id="address" name="address" rows="3" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Send</button>
     </form>
-{% else %}
-    <p>Your basket is empty. Add some products before placing an order.</p>
-{% endif %}
+</div>
 {% endblock %}
