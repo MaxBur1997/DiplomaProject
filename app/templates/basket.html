@@ -3,32 +3,53 @@
 {% block title %}Basket{% endblock %}
 
 {% block content %}
-<h2>Your Basket</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Your Basket</h2>
 
-{% if basket_details %}
-    <ul>
-        {% for item in basket_details %}
-            <li>
-                <strong>{{ item.product.name }}</strong> - {{ item.quantity }} pcs - ${{ item.total }}
-                <form action="{{ url_for('basket.remove_from_basket', product_id=item.product.id) }}" method="post" style="display: inline;">
-                    <button type="submit">Remove</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    {% if basket_details %}
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in basket_details %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.total }}</td>
+                        <td>
+                            <form action="{{ url_for('basket.remove_from_basket', product_id=item.product.id) }}" method="post" style="display:inline;">
+                                <button class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <h3>Total: ${{ total_price }}</h3>
+        <h4 class="text-end">Total Price: ${{ total_price }}</h4>
 
-    <form action="{{ url_for('basket.clear_basket') }}" method="post">
-        <button type="submit">Clear Basket</button>
-    </form>
-    <form action="{{ url_for('basket.view_basket') }}" method="post">
-        <button type="submit">Place an order</button>
-    </form>
-{% else %}
-    <p>Your basket is empty.</p>
-{% endif %}
+        <div class="d-flex justify-content-between mt-4">
+            <form action="{{ url_for('basket.clear_basket') }}" method="post">
+                <button class="btn btn-warning">Clear Basket</button>
+            </form>
+            <form action="{{ url_for('basket.place_order') }}" method="get">
+                <button class="btn btn-primary">Place an Order</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            Your basket is empty.
+        </div>
+    {% endif %}
 
-<a href="{{ url_for('product.list_products') }}">Continue Shopping</a>
-
+    <div class="text-center mt-4">
+        <a href="{{ url_for('product.list_products') }}" class="btn btn-secondary">Continue Shopping</a>
+    </div>
+</div>
 {% endblock %}

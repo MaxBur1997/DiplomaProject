@@ -3,39 +3,42 @@
 {% block title %}Menu{% endblock %}
 
 {% block content %}
-<h2>Menu</h2>
+<h2 class="text-center mb-4">Our Menu</h2>
 
-<!-- Форма фильтрации -->
-<form action="{{ url_for('product.list_products') }}" method="get" style="margin-bottom: 1em;">
-    <label for="min_price">Minimum Price:</label>
-    <input type="number" id="min_price" name="min_price" step="0.01" value="{{ min_price or '' }}">
+<div class="row">
+    {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">${{ product.price }}</p>
+                    <a href="{{ url_for('product.product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
-    <label for="max_price">Maximum Price:</label>
-    <input type="number" id="max_price" name="max_price" step="0.01" value="{{ max_price or '' }}">
-
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" value="{{ name or '' }}">
-
-    <button type="submit">Apply</button>
-
-    {% if min_price or max_price or name %}
-    <a href="{{ url_for('product.list_products') }}" class="button">Reset</a>
-    {% endif %}
-</form>
-
-<!-- Список продуктов -->
-{% if products %}
-    <ul>
-        {% for product in products %}
-            <li>
-                <h3>{{ product.name }}</h3>
-                <img src="{{ product.image_url }}" alt="{{ product.name }}" width="150">
-                <p>Price: ${{ product.price }}</p>
-                <a href="{{ url_for('product.product_detail', product_id=product.id) }}">View Details</a>
+{% if pagination %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if pagination.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('product.list_products', page=pagination.prev_num) }}">Previous</a>
+            </li>
+        {% endif %}
+        {% for page_num in pagination.iter_pages() %}
+            <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('product.list_products', page=page_num) }}">{{ page_num }}</a>
             </li>
         {% endfor %}
+        {% if pagination.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('product.list_products', page=pagination.next_num) }}">Next</a>
+            </li>
+        {% endif %}
     </ul>
-{% else %}
-    <p>No products found matching your criteria.</p>
+</nav>
 {% endif %}
 {% endblock %}

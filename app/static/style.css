@@ -1,0 +1,22 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #ff5733 !important;
+}
+
+.container h1, .container h2, .container h3 {
+    color: #343a40;
+}
+
+footer {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.alert-container {
+    margin-bottom: 20px;
+}
