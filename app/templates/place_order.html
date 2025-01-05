@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Place an Order{% endblock %}
+
+{% block content %}
+<h2>Place an Order</h2>
+
+{% if basket_details %}
+    <h3>Your Order</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in basket_details %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.total }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2"><strong>Total Price:</strong></td>
+                <td><strong>${{ total_price }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    <hr>
+    <h3>Contact Information</h3>
+    <form method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" name="address" rows="3" required></textarea>
+
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+{% else %}
+    <p>Your basket is empty. Add some products before placing an order.</p>
+{% endif %}
+{% endblock %}

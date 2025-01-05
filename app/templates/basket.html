@@ -22,6 +22,9 @@
     <form action="{{ url_for('basket.clear_basket') }}" method="post">
         <button type="submit">Clear Basket</button>
     </form>
+    <form action="{{ url_for('basket.view_basket') }}" method="post">
+        <button type="submit">Place an order</button>
+    </form>
 {% else %}
     <p>Your basket is empty.</p>
 {% endif %}
