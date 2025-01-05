@@ -3,7 +3,9 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h2>Welcome to Donut Shop</h2>
-<p>Find the best donuts!</p>
-
+<div class="text-center">
+    <h2>Welcome to Donut Duck Shop</h2>
+    <img src="{{ url_for('static', filename='images/Home.jpg') }}" alt="Donuts" class="img-fluid">
+    <p>Find the best donuts!</p>
+</div>
 {% endblock %}

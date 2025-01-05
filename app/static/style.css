@@ -20,3 +20,13 @@ footer {
 .alert-container {
     margin-bottom: 20px;
 }
+
+footer {
+    background-color: #343a40; /* Темно-серый фон */
+    color: #ffffff; /* Белый текст */
+    padding: 20px; /* Отступы для футера */
+    text-align: center; /* Центрирование текста */
+}
+
+
+
