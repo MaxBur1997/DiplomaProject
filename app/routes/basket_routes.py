@@ -113,7 +113,7 @@ def place_order():
 
 
 
-@basket_bp.route('/payment', methods=['GET'])
+@basket_bp.route('/payment', methods=['GET', 'POST'])
 def payment_system():
     """Страница платежной системы."""
     return render_template('payment_system.html')
