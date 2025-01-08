@@ -7,7 +7,7 @@ from sqlalchemy import func
 product_bp = Blueprint('product', __name__)
 
 
-@product_bp.route('/products/list', methods=['GET', 'POST'])
+@product_bp.route('/products/list', methods=['GET'])
 def list_products():
     """Отображение списка продуктов с фильтрацией."""
     query = Product.query
